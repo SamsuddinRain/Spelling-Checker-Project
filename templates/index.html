@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Based Spelling Checker</title>
+    <style>
+        /* Base reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Base reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(270deg, #ff6f61, #6a11cb, #00c9b1, #ffdc61, #ff6f61);
+            background-size: 150% 150%;
+            animation: gradientShift 8s ease infinite;
+            color: #fff;
+            overflow: hidden;
+        }
+        /* Gradient Background Animation */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0px 10px 35px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+            color: #333;
+            transform: scale(0.8);
+            animation: popIn 1.5s ease forwards;
+        }
+        /* Pop-in Animation */
+        @keyframes popIn {
+            to { transform: scale(1); }
+        }
+        h1 {
+            font-size: 2em;
+            color: rgb(31, 31, 31);
+            margin-bottom: 20px;
+            animation: bounceText 1.5s ease-in-out;
+        }
+        @keyframes bounceText {
+            0% { transform: translateY(-10px); opacity: 0; }
+            60% { transform: translateY(5px); opacity: 1; }
+            100% { transform: translateY(0); }
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            border: 2px solid #6a11cb;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #00c9b1;
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 201, 177, 0.3);
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #6a11cb;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s;
+        }
+        button:hover {
+            background-color: #16e612;
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(255, 111, 97, 0.4);
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1em;
+            opacity: 0;
+            animation: slideFadeIn 0.7s ease forwards;
+        }
+        @keyframes slideFadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spelling Checker</h1>
+        <input type="text" id="wordInput" placeholder="Enter a word">
+        <button onclick="checkSpelling()">Check Spelling</button>
+        <h2 id="result"></h2>
+    </div>
+
+    <script>
+        async function checkSpelling() {
+            const word = document.getElementById("wordInput").value;
+
+            const response = await fetch("/check", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ word: word }),
+            });
+
+            const data = await response.json();
+            const resultElement = document.getElementById("result");
+
+            if (data.correct) {
+                resultElement.textContent = `The word "${data.word}" is correct. \nHindi meaning: "${data.hindi_meaning}"`;
+                resultElement.style.whiteSpace = "pre-line";
+                resultElement.style.color = "#000000";
+            } else {
+                resultElement.textContent = `The word "${data.word}" is incorrect. \nSuggestions: ${data.suggestions.join(", ")}`;
+                resultElement.style.whiteSpace = "pre-line";
+                resultElement.style.color = "#000000";
+            }
+            resultElement.style.opacity = "1"; // Ensure result is visible
+        }
+    </script>
+</body>
+</html>
